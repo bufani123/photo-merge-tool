@@ -21,3 +21,8 @@ A Python tool for merging two images into a 4:3 vertical format. Supports random
    ```bash
    git clone https://github.com/your-username/image-merger.git
    cd image-merger
+   
+2. Install dependencies:
+   pip install pillow
+
+
