@@ -93,7 +93,7 @@ def open_image_safely(image_path):
         logging.error(f"无法打开文件 {image_path}！")
     return None
 
-def generate_random_combinations(folder_path, num_images=5, image1_offset=0):
+def generate_random_combinations(folder_path, num_images=5, image1_offset=0, output_folder=None):
     """
     从文件夹中随机选择两张图片合并为竖版 4:3 图片
     确保每次运行时不重复使用已经使用过的图片
@@ -103,7 +103,9 @@ def generate_random_combinations(folder_path, num_images=5, image1_offset=0):
         if len(image_files) < 2:
             raise ValueError(f"文件夹中的图片数量不足：{len(image_files)}，无法选择两张图片进行合并")
         
-        output_folder = os.path.join(folder_path, "output")
+        # 使用当前目录或指定输出目录
+        if not output_folder:
+            output_folder = os.getcwd()  # 如果没有指定输出文件夹，默认保存到当前工作目录
         os.makedirs(output_folder, exist_ok=True)
 
         used_images = set()  # 用来记录已经使用过的图片
@@ -135,12 +137,14 @@ def generate_random_combinations(folder_path, num_images=5, image1_offset=0):
         logging.error(f"生成合并图片时出错：{e}")
         raise
 
-def combine_specific_images(folder_path, image1_name, image2_name, output_name="combined_specific.jpg", image1_offset=0):
+def combine_specific_images(folder_path, image1_name, image2_name, output_name="combined_specific.jpg", image1_offset=0, output_folder=None):
     """
     合并指定的两张图片
     """
     try:
-        output_folder = os.path.join(folder_path, "output")
+        # 使用当前目录或指定输出目录
+        if not output_folder:
+            output_folder = os.getcwd()  # 如果没有指定输出文件夹，默认保存到当前工作目录
         os.makedirs(output_folder, exist_ok=True)
         
         # 使用提供的输出文件名
@@ -162,6 +166,7 @@ def parse_args():
     parser.add_argument("folder_path", type=str, help="图片文件夹路径")
     parser.add_argument("--num_images", type=int, default=5, help="生成的合并图片数量")
     parser.add_argument("--offset", type=int, default=0, help="第一张图片的偏移量")
+    parser.add_argument("--output_folder", type=str, default=None, help="保存合并结果的文件夹路径")
     return parser.parse_args()
 
 if __name__ == "__main__":
@@ -172,4 +177,5 @@ if __name__ == "__main__":
     #combine_specific_images(args.folder_path, "幻灯片3.jpg", "幻灯片4.jpg", "幻灯片合并.jpg", image1_offset=args.offset)
     
     # 如果需要生成多张随机图片合并，可以取消注释以下代码
-    generate_random_combinations(args.folder_path, num_images=args.num_images, image1_offset=args.offset)
+    generate_random_combinations(args.folder_path, num_images=args.num_images, image1_offset=args.offset, output_folder=args.output_folder)
+    #指令：python photo-merge-tool.py "C:\Users\Administrator\Desktop\发布" --num_images 5 --offset 100 --output_folder "C:\Users\Administrator\Desktop\输出"
